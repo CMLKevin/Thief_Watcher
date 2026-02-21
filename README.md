@@ -63,6 +63,11 @@ vercel deploy --prod
 ```
 
 ## Notes
+- This repository is now fully Next.js/TypeScript (legacy Python watcher files removed).
 - Runtime state is stored in `.tw_data` locally.
-- On Vercel, runtime storage is ephemeral (`/tmp`), so state persistence is best-effort per instance.
+- Durable persistence is supported via Upstash Redis:
+  - `UPSTASH_REDIS_REST_URL`
+  - `UPSTASH_REDIS_REST_TOKEN`
+  - optional: `THIEF_WATCHER_REDIS_PREFIX` (default: `thief_watcher`)
+- Without Redis env vars, local JSON file fallback is used.
 - Heavy endpoints (`/api/profile`, `/api/trace`, `/api/escalation-packet`) are configured for longer execution windows.
