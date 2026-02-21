@@ -9,6 +9,7 @@ Professional blockchain incident-response webapp for tracing wallet theft flows,
 - JSZip for one-click evidence bundle downloads
 
 ## Core Features
+- Hard-locked monitored wallet: `0xF5eF5Ac6B71373Be7af86eBD00Af44794CE3074E`
 - Live watch state for suspect wallet (nonce, MATIC, USDC, USDC.e)
 - Event stream with filters (`severity`, `direction`, `token`, `search`)
 - Intel tagging system (default + custom tags)

@@ -24,7 +24,7 @@ export const TOKENS = [
 ] as const;
 
 export const DEFAULT_THIEF_WALLET =
-  "0xf5ef5ac6b71373be7af86ebd00af44794ce3074e";
+  "0xF5eF5Ac6B71373Be7af86eBD00Af44794CE3074E";
 
 export const DEFAULT_VICTIM_WALLET =
   "0x3addc290c324d45a8e4fa8ef129054d15a8590ef";

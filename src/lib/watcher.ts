@@ -34,6 +34,8 @@ import {
   toFloatSafe,
 } from "@/lib/utils";
 
+const TRACKED_THIEF_WALLET = normalizeAddress(DEFAULT_THIEF_WALLET);
+
 const defaultTags: Record<string, Partial<AddressLabel>> = {
   "0x3addc290c324d45a8e4fa8ef129054d15a8590ef": {
     label: "Victim Polymarket Proxy Wallet",
@@ -106,8 +108,8 @@ function defaultState(): WatchState {
     lastPollAt: null,
     lastError: null,
     rpcPool: [...DEFAULT_RPC_POOL],
-    thiefWallet: DEFAULT_THIEF_WALLET,
-    watching: [DEFAULT_THIEF_WALLET],
+    thiefWallet: TRACKED_THIEF_WALLET,
+    watching: [TRACKED_THIEF_WALLET],
     pollIntervalMs: POLL_INTERVAL_MS,
     lookbackBlocks: LOOKBACK_BLOCKS,
     lastCheckedBlock: null,
@@ -293,7 +295,7 @@ async function appendEvents(state: WatchState, events: WatchEvent[]): Promise<Wa
 }
 
 async function tickInternal(state: WatchState): Promise<WatchState> {
-  const wallet = normalizeAddress(state.thiefWallet);
+  const wallet = TRACKED_THIEF_WALLET;
   const rpcPool = state.rpcPool?.length ? state.rpcPool : [...DEFAULT_RPC_POOL];
 
   const current = await blockNumber(rpcPool);
@@ -407,8 +409,9 @@ export async function ensureState(): Promise<WatchState> {
   const merged: WatchState = {
     ...defaultState(),
     ...current,
-    thiefWallet: normalizeAddress(current.thiefWallet || DEFAULT_THIEF_WALLET),
-    watching: dedupe((current.watching || [current.thiefWallet || DEFAULT_THIEF_WALLET]).map(normalizeAddress)),
+    // Hard lock monitoring target to the incident thief wallet.
+    thiefWallet: TRACKED_THIEF_WALLET,
+    watching: [TRACKED_THIEF_WALLET],
     rpcPool:
       Array.isArray(current.rpcPool) && current.rpcPool.length
         ? current.rpcPool
@@ -832,7 +835,8 @@ export async function generateEscalationPacket(input: {
   const notes = (input.notes || "").trim();
 
   const status = await refreshState({ forceTick: true, ignoreRunningFlag: true });
-  const suspect = normalizeAddress(input.suspectWallet || status.thiefWallet);
+  // Keep packet generation bound to the monitored thief wallet.
+  const suspect = TRACKED_THIEF_WALLET;
   const victim = normalizeAddress(input.victimWallet || "0x3addc290c324d45a8e4fa8ef129054d15a8590ef");
 
   const seedSet = dedupe([
