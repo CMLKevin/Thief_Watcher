@@ -9,3 +9,6 @@ pnpm-debug.log*
 .tw_data
 coverage
 .DS_Store
+
+__pycache__
+*.pyc
